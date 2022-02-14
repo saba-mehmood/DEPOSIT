@@ -1,12 +1,10 @@
 
 from ast import Assert
+from faulthandler import is_enabled
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import select
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 import re
 from akru_login import Login
@@ -14,7 +12,8 @@ from alerts import Alerts
 from yopmail import Yopmail
 from config import TestData
 
-
+"""LOCATORS"""
+deposit_button =(By.XPATH,'//*[@id="root"]/div/div[3]/section[2]/div/div/div[2]/section/div/div/div/div[1]/div/div/form/div[2]/button')
 
 
 def deposit():
@@ -36,33 +35,49 @@ def deposit():
    """ADD BANK"""
    try:
     driver.find_element(By.NAME,'routingNo').send_keys("021000021")
-    driver.find_element(By.NAME,'accountNo').send_keys("55784")
-    driver.find_element(By.NAME,'confirmAccountNo').send_keys("55784")
+    driver.find_element(By.NAME,'accountNo').send_keys("18124")
+    driver.find_element(By.NAME,'confirmAccountNo').send_keys("18124")
     driver.find_element(By.NAME,'bankName').send_keys("sara")
     driver.find_element(By.XPATH,'//*[@id="root"]/div/div[3]/section[2]/div/div/div[2]/section/div/div/div/div[2]/div/div/form/button').click()
-    time.sleep(8)
+    time.sleep(1)
    
 
-#    """HANDLE ALERT"""
-#    a = Alerts(driver)
-#    a.alert_error()
+    """HANDLE ALERT"""
+    a = Alerts(driver)
+    a.alert_error()
+    time.sleep(15)
 
     driver.find_element(By.XPATH,'//*[@id="root"]/div/div[3]/section[2]/div/div/div[2]/section/div/div/div/div[3]/div[1]/div/div/span[1]/a').click()
-    time.sleep(4)
+    time.sleep(2)
+
     driver.find_element(By.NAME,'amount1').send_keys('0.01')
     driver.find_element(By.NAME,'amount2').send_keys('0.01')
     driver.find_element(By.XPATH,'/html/body/div[3]/div/div[1]/div/div/div[3]/button').click()
-    time.sleep(4)
-   #element_alert = driver.find_element(By.CLASS_NAME, 'Toastify__toast-body').get_attribute('textContent')
-   #alert_text = " Bank verified successfully!"
-   #Assert.assertEqual(element_alert,alert_text)
+    time.sleep(1)
+
+    """HANDLE ALERT"""
+    a = Alerts(driver)
+    a.alert_error()
+    time.sleep(15)
+   
    except NoSuchElementException:
       print(".")
 
 
    """DEPOSIT AMOUNT"""
    driver.find_element(By.NAME,'amount').send_keys("25000")
-   driver.find_element(By.XPATH,'//*[@id="root"]/div/div[3]/section[2]/div/div/div[2]/section/div/div/div/div[1]/div/div/form/div[2]/button').click()
+   deposit_btn = driver.find_element(By.XPATH,'//*[@id="root"]/div/div[3]/section[2]/div/div/div[2]/section/div/div/div/div[1]/div/div/form/div[2]/button')
+
+   """HANDLING BUTTONS IF DISABLED"""
+   if  deposit_btn.is_enabled():
+       deposit_btn.click()
+   else:
+      print("deposit error")
+      driver.close()
+
+   """HANDLE ALERT"""
+   a = Alerts(driver)
+   a.alert_error()
    time.sleep(4)
 
    """ OTP"""
@@ -92,6 +107,13 @@ def deposit():
    a.alert_error()
 
    time.sleep(8)
+   
+  
+
+
+
+
+
 deposit()    
 
     
